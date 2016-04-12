@@ -1,0 +1,25 @@
+<ion-view view-title="证件审核">
+    <ion-content class="register-page">
+        <h4>上传律师证件</h4>
+        <div class="upload-item">
+            <span class="upload-icon" ngf-select="uploadCardFiles($files)" multiple accept="image/*" ngf-max-size="1MB"></span>
+                <span class="upload-imgItem" ng-repeat="f in cardFiles track by $index">
+                    <img ng-src="{{cardViewFiles[$index]}}" alt="">
+                    <span class="upload-progress">{{f.progress || 0}}%</span>
+                    <span class="upload-del" ng-if="f.progress == 100" ng-click="delCardImg(f, $index)">x</span>
+                </span>
+        </div>
+        <h4>上传律师所委托文本影印件</h4>
+        <div class="upload-item">
+            <span class="upload-icon" ngf-select="uploadProtocolFiles($files)" multiple accept="image/*" ngf-max-size="1MB"></span>
+                <span class="upload-imgItem" ng-repeat="f in protocolFiles track by $index">
+                    <img ng-src="{{protocolViewFiles[$index]}}" alt="">
+                    <span class="upload-progress">{{f.progress || 0}}%</span>
+                    <span class="upload-del" ng-if="f.progress == 100" ng-click="delProtocolImg(f, $index)">x</span>
+                </span>
+        </div>
+        <div class="padding-h-20">
+            <button ui-sref="app.register-lawyer-step5" class="button button-block button-positive">提交审核</button>
+        </div>
+    </ion-content>
+</ion-view>

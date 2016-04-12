@@ -1,0 +1,44 @@
+<ion-view view-title="案件上传">
+    
+    <ion-content>
+        <div class="do-upload-page">
+            <div class="list">
+                <label class="item item-input">
+                    <span class="input-label">案发时间</span>
+                    <input ng-model="data.time" type="date" placeholder="请选择案发时间">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">案发地点</span>
+                    <input ng-model="data.address" type="text" placeholder="请输入案件地点">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">处理机关</span>
+                    <input ng-model="data.department" type="text" placeholder="请输入处理机关">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">身份证号码</span>
+                    <input ng-model="data.certificateid" type="text" placeholder="请输入身份证号码">
+                </label>
+                <label class="item item-input item-select">
+                    <span class="input-label">
+                        主次责任
+                    </span>
+                    <select ng-model="data.responsibility" name="" id="">
+                        <option value="0">选择主次责任</option>
+                        <option value="1">主要责任</option>
+                        <option value="2">次要责任</option>
+                        <option value="3">全部</option>
+                        <option value="4">无</option>
+                        <option value="5">同等</option>
+                        <option value="6">无法查明</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+
+        <div class="padding-h-20">
+            <button ng-click="submitUpload()" class="button button-block button-positive">下一步</button>
+        </div>
+
+    </ion-content>
+    </ion-view>

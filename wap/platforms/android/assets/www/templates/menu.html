@@ -1,0 +1,81 @@
+<ion-side-menus enable-menu-with-back-views="false">
+
+    <ion-side-menu-content  ng-controller="menuCtrl">
+        <ion-nav-bar class="bar-stable">
+            <ion-nav-back-button>
+            </ion-nav-back-button>
+            <ion-nav-buttons side="left">
+                <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
+                </button>
+            </ion-nav-buttons>
+        </ion-nav-bar>
+        <ion-nav-view name="menuContent"></ion-nav-view>
+    </ion-side-menu-content>
+
+    <ion-side-menu side="left" width="160">
+        <ion-header-bar class="bar-stable">
+            <h1 class="title">大状</h1>
+        </ion-header-bar>
+        <ion-content >
+            <ion-list>
+           	 	<ion-item menu-close href="#/app/usercenter">
+    		    <i class="icon ion-ios-person"></i>
+                    用户中心
+                </ion-item>
+                <ion-item menu-close href="#/app/upload" ng-if="role == 'victim'">
+    		    <i class="icon ion-ios-paper"></i>
+                    案件中心
+                </ion-item>
+                
+                <ion-item menu-close href="#/app/list-by-lawyer" ng-if="role == 'lawyer'">
+    		    <i class="icon ion-ios-paper"></i>
+                    案件中心
+                </ion-item>
+<!--            <ion-item menu-close href="#/app/list">
+    		    <i class="icon ion-ios-folder"></i>
+                    案件收藏
+                </ion-item> -->
+                <ion-item menu-close href="#/app/list">
+    		    <i class="icon ion-ios-bell"></i>
+                    通知中心
+                </ion-item>
+                <ion-item menu-close href="#/app/setting">
+    		    <i class="icon ion-gear-a"></i>
+                    应用设置
+                </ion-item>
+                <ion-item menu-close href="#/app/aboutus">
+    		    <i class="icon ion-gear-a"></i>
+                    关于大状
+                </ion-item>
+                <!--<ion-item menu-close ng-click="login()">
+                    登 陆(弹框)
+                </ion-item>-->
+                <!-- <ion-item ng-if="!isLogin" menu-close href="#/index">
+                    返回首页
+                </ion-item>
+                <ion-item ng-if="!isLogin" menu-close href="#/app/re">
+                    注册
+                </ion-item>
+                <ion-item ng-if="!isLogin" menu-close href="javascript:" ng-click="toLogin()">
+                    登 陆
+                </ion-item>
+                <ion-item menu-close href="#/app/upload">
+                    案件上传
+                </ion-item>
+                <ion-item menu-close href="#/app/upload">
+                    我 的
+                </ion-item>
+                <ion-item menu-close href="#/app/list">
+                    列 表
+                </ion-item>
+                <ion-item menu-close href="#/app/case-list-lawyer">
+                    列 表（律师）
+                </ion-item>
+                <ion-item menu-close href="#/app/setting">
+                    设 置
+                </ion-item> -->
+            </ion-list>
+        </ion-content>
+    </ion-side-menu>
+</ion-side-menus>
+</body>

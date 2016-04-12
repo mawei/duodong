@@ -1,0 +1,23 @@
+<ion-modal-view>
+  <ion-header-bar class="bar-positive">
+  	<h1 class="title"></h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeModal()">取消</button>
+    </div>
+  </ion-header-bar>
+	<ion-content  class="upload">
+    	<h3>受害者上传案件须知</h3>
+    	<p>1.上传你的案件，让大状帮助你找律师</p>
+    	<p>2.快速解决你的法律难题，为你争取更多的权益</p>
+	</ion-content>
+	<div class="bar bar-footer bar-positive">
+	  <div class="title" ng-click="closeModal()" ui-sref="app.do-upload-baseinfo">我已了解并上传案件</div>
+	</div>
+	<!-- <div class="bar bar-footer bar-clear">
+	  <div class="title">
+	  	<button class="button button-full button-positive" ng-click="closeModal()" ui-sref="app.do-upload-baseinfo">
+		  
+		</button>
+	  </div>
+	</div> -->
+</ion-modal-view>

@@ -1,0 +1,37 @@
+
+<ion-view cache-view="false" view-title="我的证件">
+
+    <ion-content>
+    	<!-- <ion-refresher on-refresh="doRefresh()"  
+                           pulling-text="下拉刷新"   
+                           refreshing-text="刷新中"  
+                           refreshing-icon="ion-loading-b">  
+        </ion-refresher>  -->
+        
+        <div class="card" style="text-align:left;">
+		  <div class="item item-divider item-right item-light">
+		  	  <div class="item item-button-right">
+			    律师证
+			  </div>
+		  </div>
+		  <div class="item item-text-wrap">
+				<img alt="" ng-src="{{certificate_image}}" width="80%">
+		  </div>
+		</div>
+		<div class="card" style="text-align:left;">
+		  <div class="item item-divider item-right item-light">
+		  	  <div class="item item-button-right">
+			    委托书
+			  </div>
+		  </div>
+		  <div class="item item-text-wrap">
+				<img alt="" src="{{entrust_image}}" width="80%">
+		  </div>
+		</div>
+    </ion-content>
+    <div class="bar bar-footer bar-positive" ng-if="lawyer_status=='refuse'">
+    	<a ng-href="#/app/do-upload-lawyer">
+	  		<div class="title" >重新上传</div>
+	  	</a>
+	</div>
+</ion-view>

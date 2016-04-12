@@ -1,0 +1,28 @@
+<ion-view cache-view="false" view-title="案例列表">
+    <ion-content>
+    	<ion-refresher on-refresh="doRefresh()"  
+                           pulling-text="下拉刷新"   
+                           refreshing-text="刷新中"  
+                           refreshing-icon="ion-loading-b">  
+        </ion-refresher> 
+        <ion-list>
+            <ion-item ng-repeat="case in caseList" href="#/app/details/{{case.id}}">
+            
+	            <div class="uploadLawyerCard">
+				  <div class="item item-text-wrap">
+				  	  <div class="row">
+				  	  	<div class="col col-90">{{case.address}}/{{case.time}}</div>
+				  	  	<div class="col col-10">
+				  	  		<button class="button button-clear icon ion-ios-arrow-right"></button>
+				  	  	</div>
+				  	  </div>
+			      </div>
+				  <div class="item item-divider row">
+				  	  <div class="col col-offset-80"><font style="color:grey;font-size:14px">{{case.status}}</font> </div>
+				  </div>
+				</div>
+                
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>

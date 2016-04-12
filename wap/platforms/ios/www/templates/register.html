@@ -1,0 +1,39 @@
+<ion-modal-view>
+	<ion-header-bar>
+	    <h1 class="title">注册</h1>
+	    <div class="buttons">
+	      <button class="button button-clear" ng-click="closeRegModal()">取消</button>
+	    </div>
+	  </ion-header-bar>
+    <ion-content ng-controller="registerCtrl">
+    	<div>
+        <ul class="list form-list" >
+            <li class="item">
+                <span class="step size-24">
+                  <i class="icon ion-iphone"></i>
+                </span>
+                <input ng-model="data.nickname" class="with-icon" type="text" placeholder="设置昵称">
+            </li>
+            <li class="item">
+                <span class="step size-24">
+                  <i class="icon ion-android-lock"></i>
+                </span>
+                <input ng-model="data.password1" class="with-icon" type="password" placeholder="设置登陆密码">
+            </li>
+            <li class="item">
+                <span class="step size-24">
+                  <i class="icon ion-android-lock"></i>
+                </span>
+                <input ng-model="data.password2" class="with-icon" type="password" placeholder="再次输入登陆密码">
+            </li>
+        </ul>
+        
+        <div class="padding-h-20">
+            <button ng-click="completeUserinfo()" class="button button-block button-positive" type="submit">确认注册</button>
+        </div>
+        </div>
+    </ion-content>
+    
+</ion-modal-view>
+
+
