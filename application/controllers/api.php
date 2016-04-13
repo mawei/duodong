@@ -244,9 +244,16 @@ class api extends CI_Controller {
 		$data['activity_id'] = $this->format_get('activity_id');
 		$data['user_id'] = $user_id;
 		$data['create_time'] = time();
-		$this->db->insert('attend',$data);
+		
+		$result = $this->db->query("select * from `attend` where user_id={$user_id} and activity_id={$data['activity_id']}")->result_array();
+		if(count($result) > 0)	
+		{
+			$this->output_result(0, 'success', "已报名该活动");
+		}else{
+			$this->db->insert('attend',$data);
+			$this->output_result(0, 'success', "报名成功");
+		}
 	
-		$this->output_result(0, 'success', $this->db->insert_id());
 	}
 	
 	
