@@ -216,15 +216,39 @@ class api extends CI_Controller {
 		$data['remain_number'] = $this->format_get('remain_number');
 		$data['sex_limit'] = $this->format_get('sex_limit');
 		$data['memo'] = $this->format_get('memo');
-		$data['create_time'] = $this->format_get('create_time');
+		$data['create_time'] = time();
 		$data['creater_id'] = $user_id;
 		$data['category'] = $this->format_get('category');
+		
 		
 		$this->db->insert('activity',$data);
 		$this->db->insert_id();
 
 		$this->output_result(0, 'success', $this->db->insert_id());
 	}
+	
+	function report_activity()
+	{
+		$user_id = $this->encrypt->decode($this->format_get('user_id'),$this->key);
+		$data['activity_id'] = $this->format_get('activity_id');
+		$data['user_id'] = $user_id;
+		$data['create_time'] = time();
+		$this->db->insert('report',$data);
+		
+		$this->output_result(0, 'success', $this->db->insert_id());
+	}
+	
+	function join_activity()
+	{
+		$user_id = $this->encrypt->decode($this->format_get('user_id'),$this->key);
+		$data['activity_id'] = $this->format_get('activity_id');
+		$data['user_id'] = $user_id;
+		$data['create_time'] = time();
+		$this->db->insert('attend',$data);
+	
+		$this->output_result(0, 'success', $this->db->insert_id());
+	}
+	
 	
     function get_activities()
 	{
