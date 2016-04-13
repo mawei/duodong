@@ -266,7 +266,7 @@ class api extends CI_Controller {
 			$page = addslashes($_GET['page']);
 			$number = addslashes($_GET['number']);
 			$start = ($page-1) * $number;
-			$query = $this->db->query("select * from `activity` where creater_id='{$userid}' order by createtime desc limit {$start},{$number}");
+			$query = $this->db->query("select * from `activity` where creater_id='{$userid}' order by create_time desc limit {$start},{$number}");
 			$this->output_result(0, 'success', $query->result_array());
 	}
 	
