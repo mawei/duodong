@@ -233,9 +233,15 @@ class api extends CI_Controller {
 		$data['activity_id'] = $this->format_get('activity_id');
 		$data['user_id'] = $user_id;
 		$data['create_time'] = time();
-		$this->db->insert('report',$data);
 		
-		$this->output_result(0, 'success', $this->db->insert_id());
+		$result = $this->db->query("select * from `report` where user_id={$user_id} and activity_id={$data['activity_id']}")->result_array();
+		if(count($result) > 0)
+		{
+			$this->output_result(0, 'success', "已举报该活动");
+		}else{
+			$this->db->insert('report',$data);
+			$this->output_result(0, 'success', "举报成功");
+		}
 	}
 	
 	function join_activity()
