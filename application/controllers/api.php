@@ -211,8 +211,8 @@ class api extends CI_Controller {
 	function create_activity()
 	{
 		$user_id = $this->encrypt->decode($this->format_get('user_id'),$this->key);
-		$data['time'] = $this->format_get('time');
-		$data['address'] = $this->format_get('address');
+		$data['time'] = str_replace("+", " ", $this->format_get('time'));
+		$data['address'] = str_replace("+", " ", $this->format_get('address'));
 		$data['remain_number'] = $this->format_get('remain_number');
 		$data['sex_limit'] = $this->format_get('sex_limit');
 		$data['memo'] = $this->format_get('memo');
@@ -228,6 +228,8 @@ class api extends CI_Controller {
 
 		$this->output_result(0, 'success', $this->db->insert_id());
 	}
+	
+	
 	
 	function report_activity()
 	{
