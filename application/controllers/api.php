@@ -283,11 +283,19 @@ class api extends CI_Controller {
 // 		from `team` t1 left join `partner` t2 on t1.partner_id = t2.id
 // 		left join `category` t3 on t3.id = t1.group_id
 // 		where t1.end_time>unix_timestamp(now())"
+		if($category == "all")
+		{
+			$query = $this->db->query(
+					"select *,
+					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - latitude * 0.01745329252)),2)) as 'distance'
+					from `activity`  order by {$order} limit {$start},{$number}");
+		}else{
+			$query = $this->db->query(
+					"select *,
+					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - latitude * 0.01745329252)),2)) as 'distance'
+					from `activity` where category='{$category}'  order by {$order} limit {$start},{$number}");
+		}
 		
-		$query = $this->db->query(
-				"select *,
-				sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - latitude * 0.01745329252)),2)) as 'distance'
-				from `activity` where category='{$category}'  order by {$order} limit {$start},{$number}");
 		$this->output_result(0, 'success', $query->result_array());
 	}
 	
