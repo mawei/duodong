@@ -296,7 +296,9 @@ class api extends CI_Controller {
 			$page = addslashes($_GET['page']);
 			$number = addslashes($_GET['number']);
 			$start = ($page-1) * $number;
-			$query = $this->db->query("select * from `activity` where creater_id='{$userid}' order by create_time desc limit {$start},{$number}");
+			$query = $this->db->query("select *,
+					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - latitude * 0.01745329252)),2)) as 'distance'
+					from `activity` where creater_id='{$userid}' order by create_time desc limit {$start},{$number}");
 			$this->output_result(0, 'success', $query->result_array());
 	}
 	
@@ -306,7 +308,9 @@ class api extends CI_Controller {
 		$page = addslashes($_GET['page']);
 		$number = addslashes($_GET['number']);
 		$start = ($page-1) * $number;
-		$query = $this->db->query("select t2.* from `attend` t1 left join `activity` t2 on t1.activity_id=t2.id where user_id='{$userid}' order by t2.create_time desc limit {$start},{$number}");
+		$query = $this->db->query("select t2.*,
+				sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t2.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t2.latitude * 0.01745329252)),2)) as 'distance'
+				from `attend` t1 left join `activity` t2 on t1.activity_id=t2.id where user_id='{$userid}' order by t2.create_time desc limit {$start},{$number}");
 		$this->output_result(0, 'success', $query->result_array());
 	}
 	
