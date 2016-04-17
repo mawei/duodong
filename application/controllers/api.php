@@ -272,7 +272,7 @@ class api extends CI_Controller {
 		$page = addslashes($_GET['page']);
 		$number = addslashes($_GET['number']);
 		$order = addslashes($_GET['order']);
-		$order = addslashes($_GET['category']);
+		$category = addslashes($_GET['category']);
 		$start = ($page-1) * $number;
 		$latitude = addslashes($_GET['latitude']);
 		$longitude = addslashes($_GET['longitude']);
