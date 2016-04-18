@@ -65,6 +65,18 @@ class api extends CI_Controller {
 		}
 	}
 	
+	public function getUserInfoById()
+	{
+		$user_id = $this->format_get('user_id');
+		$query = $this->db->query("select nickname,photo,sex from `user` where id = {$user_id}");
+		if(count($query->result_array()) > 0)
+		{
+			$this->output_result(0, 'success', $query->result_array()[0]);
+		}else{
+			$this->output_result(-1, 'failed', '没有该用户');
+		}
+	}
+	
 	//登陆
 	public function login()
 	{
