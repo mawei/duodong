@@ -201,10 +201,10 @@ class api extends CI_Controller {
 		$this->output_result(0, 'success', $query->result_array());
 	}
 	
-	public function get_activity_info()
+	public function get_activity()
 	{
-		$case_id = $this->format_get('activity_id');
-		$result = $this->db->query("select * from `activity` where id = '{$case_id}'")->result_array();
+		$activity_id = $this->format_get('activity_id');
+		$result = $this->db->query("select t1.*,t2.* from `activity` t1 left join `user` t2 on t1.creater_id = t2.id where id = '{$activity_id}'")->result_array();
 		$this->output_result(0, 'success', $result);
 	}
 	
@@ -283,7 +283,7 @@ class api extends CI_Controller {
 // 		from `team` t1 left join `partner` t2 on t1.partner_id = t2.id
 // 		left join `category` t3 on t3.id = t1.group_id
 // 		where t1.end_time>unix_timestamp(now())"
-		if($category == "all")
+		if($category == "所有活动")
 		{
 			$query = $this->db->query(
 					"select *,
