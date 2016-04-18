@@ -204,7 +204,7 @@ class api extends CI_Controller {
 	public function get_activity()
 	{
 		$activity_id = $this->format_get('id');
-		$result = $this->db->query("select t1.*,t2.* from `activity` t1 left join `user` t2 on t1.creater_id = t2.id where t1.id = '{$activity_id}'")->result_array();
+		$result = $this->db->query("select t1.*,t2.* from `activity` t1 left join `user` t2 on t1.creater_id = t2.id where t1.id = '{$activity_id}'")->result_array()[0];
 		$this->output_result(0, 'success', $result);
 	}
 	
