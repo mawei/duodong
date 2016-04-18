@@ -206,7 +206,6 @@ class api extends CI_Controller {
 		$activity_id = $this->format_get('id');
 		$latitude = addslashes($_GET['latitude']);
 		$longitude = addslashes($_GET['longitude']);
-		
 		$result = $this->db->query("select t1.*,t2.*,
 					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t1.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t1.latitude * 0.01745329252)),2)) as 'distance'
 					from `activity` t1 left join `user` t2 on t1.creater_id = t2.id where t1.id = '{$activity_id}'")->result_array()[0];
@@ -291,14 +290,14 @@ class api extends CI_Controller {
 		if($category == "所有活动")
 		{
 			$query = $this->db->query(
-					"select *,
-					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - latitude * 0.01745329252)),2)) as 'distance'
-					from `activity`  order by {$order} limit {$start},{$number}");
+					"select t1.*,t2.photo,t2.nickname
+					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t1.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t1.latitude * 0.01745329252)),2)) as 'distance'
+					from `activity` t1 left join `user` t2 on t1.creater_id = t2.id  order by {$order} limit {$start},{$number}");
 		}else{
 			$query = $this->db->query(
-					"select *,
-					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - latitude * 0.01745329252)),2)) as 'distance'
-					from `activity` where category='{$category}'  order by {$order} limit {$start},{$number}");
+					"select t1.*,t2.photo,t2.nickname
+					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t1.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t1.latitude * 0.01745329252)),2)) as 'distance'
+					from `activity` t1 left join `user` t2 on t1.creater_id = t2.id where category='{$category}'  order by {$order} limit {$start},{$number}");
 		}
 		
 		$this->output_result(0, 'success', $query->result_array());
@@ -310,9 +309,10 @@ class api extends CI_Controller {
 			$page = addslashes($_GET['page']);
 			$number = addslashes($_GET['number']);
 			$start = ($page-1) * $number;
-			$query = $this->db->query("select *,
-					0 as 'distance'
-					from `activity` where creater_id='{$userid}' order by create_time desc limit {$start},{$number}");
+			$query = $this->db->query(
+					"select t1.*,t2.photo,t2.nickname
+					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t1.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t1.latitude * 0.01745329252)),2)) as 'distance'
+					from `activity` t1 left join `user` t2 on t1.creater_id = t2.id where t1.creater_id='{$userid}' order by t1.create_time desc limit {$start},{$number}");
 			$this->output_result(0, 'success', $query->result_array());
 	}
 	
@@ -323,8 +323,8 @@ class api extends CI_Controller {
 		$number = addslashes($_GET['number']);
 		$start = ($page-1) * $number;
 		$query = $this->db->query("select t2.*,
-				0 as 'distance'
-				from `attend` t1 left join `activity` t2 on t1.activity_id=t2.id where user_id='{$userid}' order by t2.create_time desc limit {$start},{$number}");
+					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t2.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t2.latitude * 0.01745329252)),2)) as 'distance'
+					from `attend` t1 join `activity` t2 on t1.activity_id=t2.id join `user` t3 on t3.id = t2.creater_id  where t1.user_id='{$userid}' order by t2.create_time desc limit {$start},{$number}");
 		$this->output_result(0, 'success', $query->result_array());
 	}
 	
