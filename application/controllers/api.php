@@ -267,6 +267,23 @@ class api extends CI_Controller {
 			$this->db->insert('attend',$data);
 			$this->output_result(0, 'success', "报名成功");
 		}
+	}
+	
+	function collect_activity()
+	{
+		$user_id = $this->encrypt->decode($this->format_get('user_id'),$this->key);
+		$data['activity_id'] = $this->format_get('activity_id');
+		$data['user_id'] = $user_id;
+		$data['create_time'] = time();
+	
+		$result = $this->db->query("select * from `collect` where user_id={$user_id} and activity_id={$data['activity_id']}")->result_array();
+		if(count($result) > 0)
+		{
+			$this->output_result(0, 'success', "已收藏该活动");
+		}else{
+			$this->db->insert('attend',$data);
+			$this->output_result(0, 'success', "收藏成功");
+		}
 	
 	}
 	
@@ -330,6 +347,20 @@ class api extends CI_Controller {
 					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t2.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t2.latitude * 0.01745329252)),2)) as 'distance'
 					from `attend` t1 join `activity` t2 on t1.activity_id=t2.id join `user` t3 on t3.id = t2.creater_id  where t1.user_id='{$userid}' order by t2.create_time desc limit {$start},{$number}");
 		$this->output_result(0, 'success', $query->result_array());
+	}
+	
+	public function get_activity_by_collect()
+	{
+		$userid = $this->encrypt->decode($this->format_get('user_id'), $this->key);
+		$page = addslashes($_GET['page']);
+		$number = addslashes($_GET['number']);
+		$latitude = addslashes($_GET['latitude']);
+		$longitude = addslashes($_GET['longitude']);
+		$start = ($page-1) * $number;
+		$query = $this->db->query("select t2.*,t3.photo,t3.nickname,
+				sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t2.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t2.latitude * 0.01745329252)),2)) as 'distance'
+				from `collect` t1 join `activity` t2 on t1.activity_id=t2.id join `user` t3 on t3.id = t2.creater_id  where t1.user_id='{$userid}' order by t2.create_time desc limit {$start},{$number}");
+				$this->output_result(0, 'success', $query->result_array());
 	}
 	
 	private function sms_code($mobile, $code) {
