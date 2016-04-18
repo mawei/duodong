@@ -326,7 +326,7 @@ class api extends CI_Controller {
 		$latitude = addslashes($_GET['latitude']);
 		$longitude = addslashes($_GET['longitude']);
 		$start = ($page-1) * $number;
-		$query = $this->db->query("select t2.*,
+		$query = $this->db->query("select t2.*,t3.photo,t3.nickname,
 					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t2.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t2.latitude * 0.01745329252)),2)) as 'distance'
 					from `attend` t1 join `activity` t2 on t1.activity_id=t2.id join `user` t3 on t3.id = t2.creater_id  where t1.user_id='{$userid}' order by t2.create_time desc limit {$start},{$number}");
 		$this->output_result(0, 'success', $query->result_array());
