@@ -308,6 +308,8 @@ class api extends CI_Controller {
 			$userid = $this->encrypt->decode($this->format_get('user_id'), $this->key);
 			$page = addslashes($_GET['page']);
 			$number = addslashes($_GET['number']);
+			$latitude = addslashes($_GET['latitude']);
+			$longitude = addslashes($_GET['longitude']);
 			$start = ($page-1) * $number;
 			$query = $this->db->query(
 					"select t1.*,t2.photo,t2.nickname,
@@ -321,6 +323,8 @@ class api extends CI_Controller {
 		$userid = $this->encrypt->decode($this->format_get('user_id'), $this->key);
 		$page = addslashes($_GET['page']);
 		$number = addslashes($_GET['number']);
+		$latitude = addslashes($_GET['latitude']);
+		$longitude = addslashes($_GET['longitude']);
 		$start = ($page-1) * $number;
 		$query = $this->db->query("select t2.*,
 					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t2.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t2.latitude * 0.01745329252)),2)) as 'distance'
