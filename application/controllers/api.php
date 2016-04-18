@@ -281,7 +281,7 @@ class api extends CI_Controller {
 		{
 			$this->output_result(0, 'success', "已收藏该活动");
 		}else{
-			$this->db->insert('attend',$data);
+			$this->db->insert('collect',$data);
 			$this->output_result(0, 'success', "收藏成功");
 		}
 	
