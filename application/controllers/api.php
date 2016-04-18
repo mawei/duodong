@@ -204,7 +204,12 @@ class api extends CI_Controller {
 	public function get_activity()
 	{
 		$activity_id = $this->format_get('id');
-		$result = $this->db->query("select t1.*,t2.* from `activity` t1 left join `user` t2 on t1.creater_id = t2.id where t1.id = '{$activity_id}'")->result_array()[0];
+		$latitude = addslashes($_GET['latitude']);
+		$longitude = addslashes($_GET['longitude']);
+		
+		$result = $this->db->query("select t1.*,t2.*,
+					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t1.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t1.latitude * 0.01745329252)),2)) as 'distance'
+					from `activity` t1 left join `user` t2 on t1.creater_id = t2.id where t1.id = '{$activity_id}'")->result_array()[0];
 		$this->output_result(0, 'success', $result);
 	}
 	
