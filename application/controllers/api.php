@@ -156,7 +156,7 @@ class api extends CI_Controller {
 			$photo = '/uploads/user/' . $this->upload->data()['file_name'];
 		}
 		$this->db->query("update `user` set photo='{$photo}' where id='{$user_id}'");
-		$this->output_result(0, 'success','success');
+		$this->output_result(0, 'success',$photo);
 	}
 	
 	public function complete_userinfo()
