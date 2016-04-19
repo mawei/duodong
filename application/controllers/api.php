@@ -280,6 +280,12 @@ class api extends CI_Controller {
 	
 	}
 	
+	function get_apply_users()
+	{
+		$activity_id = $this->format_get('activity_id');
+		$result = $this->db->query("select t2.photo,t2.nickname,t2.id,t2.sex from `attend` t1 join `user` t2 on t1.user_id=t2.id  where activity_id={$activity_id}")->result_array();
+		$this->output_result(0, 'success', $result);
+	}
 	
     function get_activities()
 	{
