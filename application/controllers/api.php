@@ -198,7 +198,7 @@ class api extends CI_Controller {
 		$activity_id = $this->format_get('id');
 		$latitude = addslashes($_GET['latitude']);
 		$longitude = addslashes($_GET['longitude']);
-		$result = $this->db->query("select t1.*,t2.*,
+		$result = $this->db->query("select t1.*,t2.photo,t2.nickname,
 					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t1.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t1.latitude * 0.01745329252)),2)) as 'distance'
 					from `activity` t1 left join `user` t2 on t1.creater_id = t2.id where t1.id = '{$activity_id}'")->result_array()[0];
 		$this->output_result(0, 'success', $result);
@@ -207,7 +207,7 @@ class api extends CI_Controller {
 	function create_activity()
 	{
 		$user_id = $this->encrypt->decode($this->format_get('user_id'),$this->key);
-		$data['time'] = str_replace("+", " ", $this->format_get('time'));
+		$data['time'] = str_replace("+", "-", $this->format_get('time'));
 		$data['address'] = str_replace("+", " ", $this->format_get('address'));
 		$data['remain_number'] = $this->format_get('remain_number');
 		$data['sex_limit'] = $this->format_get('sex_limit');
@@ -257,6 +257,7 @@ class api extends CI_Controller {
 			$this->output_result(0, 'success', "已报名该活动");
 		}else{
 			$this->db->insert('attend',$data);
+			$this->db->query("update `activity` set apply_number = apply_number + 1 where id={$data['activity_id']}");
 			$this->output_result(0, 'success', "报名成功");
 		}
 	}
@@ -284,18 +285,22 @@ class api extends CI_Controller {
 	{
 		$page = addslashes($_GET['page']);
 		$number = addslashes($_GET['number']);
-		$order = addslashes($_GET['order']);
+		$time = addslashes($_GET['time']);
 		$category = addslashes($_GET['category']);
 		$start = ($page-1) * $number;
 		$latitude = addslashes($_GET['latitude']);
 		$longitude = addslashes($_GET['longitude']);
-		
-		
-// 		"select t1.id,t1.title,t1.product,t1.team_price,t1.market_price,t1.image,t1.now_number, t2.title as partnername,t1.summary,
-// 		sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t2.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$longitude} * 0.01745329252 - t2.latitude * 0.01745329252)),2)) as 'distance'
-// 		from `team` t1 left join `partner` t2 on t1.partner_id = t2.id
-// 		left join `category` t3 on t3.id = t1.group_id
-// 		where t1.end_time>unix_timestamp(now())"
+// 		$query_str = "select t1.*,t2.photo,t2.nickname,
+// 					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t1.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t1.latitude * 0.01745329252)),2)) as 'distance'
+// 					from `activity` t1 left join `user` t2 on t1.creater_id = t2.id";
+// 		if($category == "所有活动")
+// 		{
+// 			$query_str += " where category='{$category}'";
+// 		}
+// 		if($time == "今天")
+// 		{
+			
+// 		}
 		if($category == "所有活动")
 		{
 			$query = $this->db->query(
