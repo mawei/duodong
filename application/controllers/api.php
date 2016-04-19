@@ -72,7 +72,7 @@ class api extends CI_Controller {
 		if(count($query->result_array()) > 0)
 		{
 			$result = $query->result_array()[0];
-			$result['id'] = $this->encrypt->encode($authcode,$result['id']);
+			$result['id'] = $this->encrypt->encode($result['id'],$this->key);
 			$this->output_result(0, 'success', $result);
 		}else{
 			$this->output_result(-1, 'failed', '没有该用户');
