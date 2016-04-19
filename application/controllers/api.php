@@ -292,22 +292,23 @@ class api extends CI_Controller {
 		$longitude = addslashes($_GET['longitude']);
 		$query_str = "select t1.*,t2.photo,t2.nickname,
 					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t1.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t1.latitude * 0.01745329252)),2)) as 'distance'
-					from `activity` t1 left join `user` t2 on t1.creater_id = t2.id";
-		if($category == "所有活动")
-		{
-			$query_str .= " where category='{$category}'";
-		}
+					from `activity` t1 left join `user` t2 on t1.creater_id = t2.id where";
+		
 		if($time == "今天")
 		{
-			$query_str .= " and DATEDIFF(t1.time,NOW()) = 0";
+			$query_str .= " DATEDIFF(t1.time,NOW()) = 0";
 		}else if($time == "明天"){
-			$query_str .= " and DATEDIFF(t1.time,NOW()) = 1";
+			$query_str .= " DATEDIFF(t1.time,NOW()) = 1";
 		}else if($time == "后天"){
-			$query_str .= " and DATEDIFF(t1.time,NOW()) = 2";
+			$query_str .= " DATEDIFF(t1.time,NOW()) = 2";
 		}else if($time == "一周内"){
-			$query_str .= " and DATEDIFF(t1.time,NOW()) <= 7";
+			$query_str .= " DATEDIFF(t1.time,NOW()) <= 7";
 		}else if($time == "一个月内"){
-			$query_str += " and DATEDIFF(t1.time,NOW()) <= 30";
+			$query_str .= " DATEDIFF(t1.time,NOW()) <= 30";
+		}
+		if($category != "所有活动")
+		{
+			$query_str .= " and category='{$category}'";
 		}
 		$query_str .= " order by distance asc, t1.time asc limit {$start},{$number}";
 		$query = $this->db->query($query_str);
