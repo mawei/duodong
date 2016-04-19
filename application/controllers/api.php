@@ -295,21 +295,21 @@ class api extends CI_Controller {
 					from `activity` t1 left join `user` t2 on t1.creater_id = t2.id";
 		if($category == "所有活动")
 		{
-			$query_str += " where category='{$category}'";
+			$query_str .= " where category='{$category}'";
 		}
 		if($time == "今天")
 		{
-			$query_str += " and DATEDIFF(t1.time,NOW()) = 0";
+			$query_str .= " and DATEDIFF(t1.time,NOW()) = 0";
 		}else if($time == "明天"){
-			$query_str += " and DATEDIFF(t1.time,NOW()) = 1";
+			$query_str .= " and DATEDIFF(t1.time,NOW()) = 1";
 		}else if($time == "后天"){
-			$query_str += " and DATEDIFF(t1.time,NOW()) = 2";
+			$query_str .= " and DATEDIFF(t1.time,NOW()) = 2";
 		}else if($time == "一周内"){
-			$query_str += " and DATEDIFF(t1.time,NOW()) <= 7";
+			$query_str .= " and DATEDIFF(t1.time,NOW()) <= 7";
 		}else if($time == "一个月内"){
 			$query_str += " and DATEDIFF(t1.time,NOW()) <= 30";
 		}
-		$query_str += " order by distance asc, t1.time asc limit {$start},{$number}";
+		$query_str .= " order by distance asc, t1.time asc limit {$start},{$number}";
 		$query = $this->db->query($query_str);
 		
 		$this->output_result(0, 'success', $query->result_array());
