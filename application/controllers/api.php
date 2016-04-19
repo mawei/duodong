@@ -306,6 +306,7 @@ class api extends CI_Controller {
 		}else if($time == "一个月内"){
 			$query_str .= " DATEDIFF(t1.time,NOW()) <= 30";
 		}
+		$query_str .= " and DATEDIFF(t1.time,NOW()) > -1";
 		if($category != "所有活动")
 		{
 			$query_str .= " and category='{$category}'";
