@@ -83,15 +83,14 @@ class api extends CI_Controller {
 	public function login()
 	{
 		$username = $this->format_get('username');
-		$type = $this->format_get('type');
 		$authcode = $this->format_get('code');
 		$password = md5($this->key.$this->format_get('password'));
 		
-		$result = $this->db->query("select * from `user` where username = '{$username}' and type = '{$type}'")->result_array();
+		$result = $this->db->query("select * from `user` where username = '{$username}'")->result_array();
 		
 		if(count($result) >= 1)
 		{
-			$result2 = $this->db->query("select * from `user` where username = '{$username}' and password='{$password}' and type = '{$type}'")->result_array();
+			$result2 = $this->db->query("select * from `user` where username = '{$username}' and password='{$password}'")->result_array();
 			if(count($result2) >= 1)
 			{
 				$array['id'] = $this->encrypt->encode($result2[0]['id'], $this->key);
@@ -111,13 +110,12 @@ class api extends CI_Controller {
 	{
 		$username = $this->format_get('username');
 		$auth_code_secret = $this->encrypt->decode($this->format_get('auth_code_secret'),$this->key);
-		$type = $this->format_get('type');
 		$authcode = $this->format_get('code');
 		if($authcode != $auth_code_secret)
 		{
 			$this->output_result(-1, 'failed', '验证码错误');
 		}
-		$result = $this->db->query("select * from `user` where username = '{$username}' and type = '{$type}'")->result_array();
+		$result = $this->db->query("select * from `user` where username = '{$username}'")->result_array();
 		
 		if(count($result) >= 1)
 		{
@@ -125,17 +123,6 @@ class api extends CI_Controller {
 		}
 		else
 		{
-// 			$create_time = time();
-// 			$userinfo = $this->db->query(" insert into `user` (username,type,create_time) VALUES ('{$username}','{$type}','{$create_time}')");
-// 			$userid = $this->db->insert_id();
-// 			//echo $this->encrypt->decode($userid, $this->key);
-// 			if($type == "lawyer")
-// 			{
-// 				$this->db->query(" insert into `lawyer` (userid) VALUES ('{$userid}')");
-// 			}else if($type == "victim")
-// 			{
-// 				$this->db->query(" insert into `victim` (userid) VALUES ('{$userid}')");
-// 			}
 			$this->output_result(0, 'success', '');
 		}
 	}
@@ -177,7 +164,6 @@ class api extends CI_Controller {
 	{
 		//$user_id = $this->encrypt->decode($this->format_get('user_id'),$this->key);
 		$username = $this->format_get('username');
-		$type = $this->format_get('type');
 		$nickname = $this->format_get('nickname');
 		$password1 = $this->format_get('password1');
 		$password2 = $this->format_get('password2');
@@ -190,17 +176,9 @@ class api extends CI_Controller {
 		}else{
 			$create_time = time();
 			$password = md5($this->key.$password1);
-			$userinfo = $this->db->query(" insert into `user` (username,nickname,password,type,create_time) VALUES ('{$username}','{$nickname}','{$password}','{$type}','{$create_time}')");
+			$userinfo = $this->db->query(" insert into `user` (username,nickname,password,create_time) VALUES ('{$username}','{$nickname}','{$password}','{$create_time}')");
 			$userid = $this->db->insert_id();
-			if($type == "lawyer")
-				{
-					$this->db->query(" insert into `lawyer` (userid) VALUES ('{$userid}')");
-				}else if($type == "victim")
-					{
-					$this->db->query(" insert into `victim` (userid) VALUES ('{$userid}')");
-				}
 			$this->output_result(0, 'success', $this->encrypt->encode($userid, $this->key));
-				
 			//$this->db->query("update `user` set password='{$password}' and nickname='{$nickname}' where userid='{$user_id}'");
 		}
 	}
