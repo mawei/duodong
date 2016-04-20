@@ -196,7 +196,12 @@ class api extends CI_Controller {
 	public function get_activity()
 	{
 		$activity_id = $this->format_get('id');
-		$user_id = $this->encrypt->decode($this->format_get('user_id'),$this->key);
+		if($this->format_get('user_id') == "0")
+		{
+			$user_id = "0";
+		}else{
+			$user_id = $this->encrypt->decode($this->format_get('user_id'),$this->key);
+		}
 		
 		$latitude = addslashes($_GET['latitude']);
 		$longitude = addslashes($_GET['longitude']);
