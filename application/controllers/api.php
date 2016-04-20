@@ -204,7 +204,7 @@ class api extends CI_Controller {
 					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t1.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t1.latitude * 0.01745329252)),2)) as 'distance'
 					from `activity` t1 left join `user` t2 on t1.creater_id = t2.id where t1.id = '{$activity_id}'")->result_array()[0];
 		$apply = $this->db->query("select * from `attend` where activity_id = {$activity_id} and user_id={$user_id}")->result_array();
-		$result["is_attend"] = count($apply) > 0 ? "1" : "0";
+		$result["is_apply"] = count($apply) > 0 ? "1" : "0";
 		
 		$collect = $this->db->query("select * from `collect` where activity_id = {$activity_id} and user_id={$user_id}")->result_array();
 		$result["is_collect"] = count($collect) > 0 ? "1" : "0";
