@@ -385,13 +385,17 @@ class api extends CI_Controller {
 	{
 		$follow_user_id = $this->encrypt->decode($this->format_get('self_user_id'), $this->key);
 		$followed_user_id = addslashes($_GET['user_id']);
-		
-		$data['follow_user_id'] = $follow_user_id;
-		$data['followed_user_id'] = $followed_user_id;
-		$data['create_time'] = time();
-		$data['status'] = 1;
-		$this->db->insert('follow',$data);
-		$this->output_result(0, 'success', 'success');
+		$query = $this->db->query("select * from `follow` where follow_user_id={$follow_user_id} and followed_user_id={$followed_user_id}")->result_array();
+		if(count($query) > 0){
+			$this->output_result(0, 'success', '已关注');
+		}else{
+			$data['follow_user_id'] = $follow_user_id;
+			$data['followed_user_id'] = $followed_user_id;
+			$data['create_time'] = time();
+			$data['status'] = 1;
+			$this->db->insert('follow',$data);
+			$this->output_result(0, 'success', 'success');
+		}
 	}
 	
 	public function send_message()
