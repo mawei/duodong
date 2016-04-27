@@ -388,7 +388,7 @@ class api extends CI_Controller {
 		
 		$data['follow_user_id'] = $follow_user_id;
 		$data['followed_user_id'] = $followed_user_id;
-		$data['create_time'] = now();
+		$data['create_time'] = time();
 		$data['status'] = 1;
 		$this->db->insert('follow',$data);
 		$this->output_result(0, 'success', 'success');
@@ -399,7 +399,7 @@ class api extends CI_Controller {
 		$data['content'] = addslashes($_GET['content']);
 		$data['user_id'] = $this->encrypt->decode($this->format_get('self_user_id'), $this->key);
 		$data['to_user_id'] = addslashes($_GET['user_id']);
-		$data['create_time'] = now();
+		$data['create_time'] = time();
 		$this->db->insert('message',$data);
 		$this->output_result(0, 'success', 'success');
 	}
