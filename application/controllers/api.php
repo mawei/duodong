@@ -391,7 +391,7 @@ class api extends CI_Controller {
 		$data['create_time'] = now();
 		$data['status'] = 1;
 		$this->db->insert('follow',$data);
-		$this->output_result(0, 'success', $query->result_array());
+		$this->output_result(0, 'success', 'success');
 	}
 	
 	public function send_message()
@@ -401,7 +401,7 @@ class api extends CI_Controller {
 		$data['to_user_id'] = addslashes($_GET['user_id']);
 		$data['create_time'] = now();
 		$this->db->insert('message',$data);
-		$this->output_result(0, 'success', $query->result_array());
+		$this->output_result(0, 'success', 'success');
 	}
 	
 	private function sms_code($mobile, $code) {
