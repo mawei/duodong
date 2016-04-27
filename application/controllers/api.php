@@ -381,6 +381,29 @@ class api extends CI_Controller {
 				$this->output_result(0, 'success', $query->result_array());
 	}
 	
+	public function follow()
+	{
+		$follow_user_id = $this->encrypt->decode($this->format_get('self_user_id'), $this->key);
+		$followed_user_id = addslashes($_GET['user_id']);
+		
+		$data['follow_user_id'] = $follow_user_id;
+		$data['followed_user_id'] = $followed_user_id;
+		$data['create_time'] = now();
+		$data['status'] = 1;
+		$this->db->insert('follow',$data);
+		$this->output_result(0, 'success', $query->result_array());
+	}
+	
+	public function send_message()
+	{
+		$data['content'] = addslashes($_GET['content']);
+		$data['user_id'] = $this->encrypt->decode($this->format_get('self_user_id'), $this->key);
+		$data['to_user_id'] = addslashes($_GET['user_id']);
+		$data['create_time'] = now();
+		$this->db->insert('message',$data);
+		$this->output_result(0, 'success', $query->result_array());
+	}
+	
 	private function sms_code($mobile, $code) {
 		$content = "【公盛科技】您的验证码是{$code}";
 		$url="http://yunpian.com/v1/sms/send.json";
@@ -418,41 +441,6 @@ class api extends CI_Controller {
 		return $data;
 	}
 	
-// 	function send_sms_by_api( $text, $mobile){
-// 		$url="http://yunpian.com/v1/sms/send.json";
-// 		$encoded_text = urlencode("$text");
-// 		$post_string="apikey=355e91e02a95574559ebba5a3c1af6c2&text=$encoded_text&mobile=$mobile";
-// 		return sock_post($url, $post_string);
-// 	}
-	
-	
-// 	private function pay()
-// 	{
-// 		$payment_id = addslashes($_GET['payment_id']);
-// 		$query = $this->db->query("update `payment` (status) values ('已付款') where id = ");
-// 	}
-	
-	private function get_first_payment_rate()
-	{
-		$query = $this->db->query("select * from `config` where key = 'first_payment_rate'");
-		if(count($query->result_array()) > 0)
-		{
-			return $query->result_array()[0]['value'];
-		}else{
-			return 0;
-		}
-	}
-	
-	private function get_second_payment_rate()
-	{
-		$query = $this->db->query("select * from `config` where key = 'second_payment_rate'");
-		if(count($query->result_array()) > 0)
-		{
-			return $query->result_array()[0]['value'];
-		}else{
-			return 0;
-		}
-	}
 	
 	private function format_get($param,$default = "")
 	{
