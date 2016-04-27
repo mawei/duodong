@@ -80,12 +80,12 @@ class api extends CI_Controller {
 				$query2 = $this->db->query("select * from `follow` where follow_user_id={$self_user_id} and followed_user_id={$user_id} and status=1");
 				if(count($query2->result_array()) > 0)
 				{
-					$result['followed'] = "关注中";
+					$result['follow'] = "关注中";
 				}else{
-					$result['followed'] = "关注";
+					$result['follow'] = "关注";
 				}
 			}else{
-				$result['followed'] = "关注";
+				$result['follow'] = "关注";
 			}
 			$this->output_result(0, 'success', $result);
 		}else{
