@@ -68,11 +68,25 @@ class api extends CI_Controller {
 	public function getUserInfoById()
 	{
 		$user_id = $this->format_get('user_id');
+		
 		$query = $this->db->query("select id, nickname,photo,sex from `user` where id = {$user_id}");
 		if(count($query->result_array()) > 0)
 		{
 			$result = $query->result_array()[0];
-			$result['id'] = $this->encrypt->encode($result['id'],$this->key);
+			if($this->format_get('self_user_id','') != '')
+			{
+				$result['id'] = $this->encrypt->encode($result['id'],$this->key);
+				$self_user_id = $this->encrypt->decode($this->format_get('self_user_id'), $this->key);
+				$query2 = $this->db->query("select * from `follow` where follow_user_id={$self_user_id} and followed_user_id={$user_id} and status=1");
+				if(count($query2->result_array()) > 0)
+				{
+					$result['followed'] = "关注中";
+				}else{
+					$result['followed'] = "关注";
+				}
+			}else{
+				$result['followed'] = "关注";
+			}
 			$this->output_result(0, 'success', $result);
 		}else{
 			$this->output_result(-1, 'failed', '没有该用户');
@@ -387,16 +401,31 @@ class api extends CI_Controller {
 		$followed_user_id = addslashes($_GET['user_id']);
 		$query = $this->db->query("select * from `follow` where follow_user_id={$follow_user_id} and followed_user_id={$followed_user_id}")->result_array();
 		if(count($query) > 0){
-			$this->output_result(0, 'success', '已关注');
+			$this->db->query("update `follow` set status=1 where follow_user_id={$follow_user_id} and followed_user_id={$followed_user_id}");
+			$this->output_result(0, 'success', '成功关注');
 		}else{
 			$data['follow_user_id'] = $follow_user_id;
 			$data['followed_user_id'] = $followed_user_id;
 			$data['create_time'] = time();
 			$data['status'] = 1;
 			$this->db->insert('follow',$data);
-			$this->output_result(0, 'success', 'success');
+			$this->output_result(0, 'success', '成功关注');
 		}
 	}
+	
+	public function cancel_follow()
+	{
+		$follow_user_id = $this->encrypt->decode($this->format_get('self_user_id'), $this->key);
+		$followed_user_id = addslashes($_GET['user_id']);
+		$query = $this->db->query("select * from `follow` where follow_user_id={$follow_user_id} and followed_user_id={$followed_user_id}")->result_array();
+		if(count($query) > 0){
+			$this->db->query("update `follow` set status=0 where follow_user_id={$follow_user_id} and followed_user_id={$followed_user_id}");
+			$this->output_result(0, 'success', '已取消关注');
+		}else{
+			$this->output_result(0, 'success', '已取消关注');
+		}
+	}
+	
 	
 	public function send_message()
 	{
