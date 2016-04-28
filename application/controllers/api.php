@@ -377,7 +377,8 @@ class api extends CI_Controller {
 		$this->output_result ( 0, 'success', $query->result_array () );
 	}
 	public function get_messages() {
-		$userid = $this->encrypt->decode ( $this->format_get ( 'user_id' ), $this->key );
+		$self_id = $this->encrypt->decode ( $this->format_get ( 'self_user_id' ), $this->key );
+		$user_id = $this->format_get ( 'user_id' );
 		$page = addslashes ( $_GET ['page'] );
 		$number = addslashes ( $_GET ['number'] );
 		$query = $this->db->query ( "
@@ -391,7 +392,8 @@ class api extends CI_Controller {
 				from `message` t1 
 				left join `user` t2 on t1.user_id=t2.id 
 				left join `user` t3 on t1.to_user_id=t3.id 
-				where t1.user_id=52 or t1.to_user_id=52  
+				where (t1.user_id={$self_id} and t1.to_user_id={$user_id} ) 
+				or (t1.user_id={$user_id} and t1.to_user_id={$self_id} )
 				order by t1.create_time desc
 				" );
 		
