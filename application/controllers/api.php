@@ -373,7 +373,7 @@ class api extends CI_Controller {
 	}
 	public function get_follows() {
 		$user_id = $this->encrypt->decode ( $this->format_get ( 'user_id' ), $this->key );
-		$query = $this->db->query ( "select t2.photo,t2.nickname from `follow` t1 left join `user` t2 on t1.followed_user_id=t2.id where follow_user_id={$user_id} and status=1 " );
+		$query = $this->db->query ( "select t2.id, t2.photo,t2.nickname from `follow` t1 left join `user` t2 on t1.followed_user_id=t2.id where follow_user_id={$user_id} and status=1 " );
 		$this->output_result ( 0, 'success', $query->result_array () );
 	}
 	public function get_messages() {
