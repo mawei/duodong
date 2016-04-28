@@ -402,7 +402,9 @@ class api extends CI_Controller {
 		$page = addslashes ( $_GET ['page'] );
 		$number = addslashes ( $_GET ['number'] );
 		$query = $this->db->query ( "
-				select 
+				select
+				t1.user_id,
+				t1.content, 
 				t2.nickname,
 				t2.photo,
 				t3.create_time 
