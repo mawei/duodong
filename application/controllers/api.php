@@ -437,6 +437,69 @@ class api extends CI_Controller {
 		$this->output_result(0, 'success', 'success');
 	}
 	
+	public function get_follows()
+	{
+		$user_id = $this->encrypt->decode($this->format_get('user_id'), $this->key);
+		$query = $this->db->query("select t2.photo,t2.nickname from `follow` t1 left join `user` t2 on t1.followed_user_id=t2.id where follow_user_id={$user_id} and status=1 ");
+		$this->output_result(0, 'success', $query->result_array());
+	}
+	
+	public function get_messages()
+	{
+		$userid = $this->encrypt->decode($this->format_get('user_id'), $this->key);
+		$page = addslashes($_GET['page']);
+		$number = addslashes($_GET['number']);
+		$query = $this->db->query("
+			select 
+				t2.nickname as user_nickname,
+				t2.photo as user_photo,
+				t3.nickname as to_user_nickname,
+				t3.photo as to_user_photo,
+				t1.content,
+				t1.create_time 
+				from `message` t1 
+				left join `user` t2 on t1.user_id=t2.id 
+				left join `user` t3 on t1.to_user_id=t3.id 
+				where t1.user_id=52 or t1.to_user_id=52  
+				order by t1.create_time desc
+				");
+		
+		$this->output_result(0, 'success', $query->result_array());
+	}
+	
+	public function get_message_list()
+	{
+		$userid = $this->encrypt->decode($this->format_get('user_id'), $this->key);
+		$page = addslashes($_GET['page']);
+		$number = addslashes($_GET['number']);
+		$query = $this->db->query("
+				select 
+				t2.nickname,
+				t2.photo,
+				t3.create_time 
+				from 
+					(select 
+						case when t1.user_id={$userid} then t1.to_user_id else t1.user_id END as user_id,
+						t1.create_time from 
+							(select * from `message` ORDER by create_time DESC) t1 
+					where t1.user_id={$userid} or t1.to_user_id={$userid} 
+					GROUP by case when user_id>t1.to_user_id THEN t1.user_id*1000000000 + t1.to_user_id ELSE t1.to_user_id*1000000000 + t1.user_id END  
+					order by t1.create_time DESC) t3 left join `user` t2 on t2.id=t3.user_id
+				");
+		$this->output_result(0, 'success', $query->result_array());
+	}
+	
+	public function get_follow_list()
+	{
+		$userid = $this->encrypt->decode($this->format_get('user_id'), $this->key);
+		$page = addslashes($_GET['page']);
+		$number = addslashes($_GET['number']);
+		$query = $this->db->query("
+			select t2.id, t2.nickname,t2.photo from `follow` t1 left join `user` t2 on t1.followed_user_id=t2.id where follow_user_id = {$userid}
+		");
+		$this->output_result(0, 'success', $query->result_array());
+	}
+	
 	private function sms_code($mobile, $code) {
 		$content = "【公盛科技】您的验证码是{$code}";
 		$url="http://yunpian.com/v1/sms/send.json";
