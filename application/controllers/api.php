@@ -405,19 +405,21 @@ class api extends CI_Controller {
 		$number = addslashes ( $_GET ['number'] );
 		$query = $this->db->query ( "
 				select
-				t1.user_id,
-				t1.content, 
+				t3.user_id,
+				t3.content, 
 				t2.nickname,
 				t2.photo,
 				t3.create_time 
 				from 
 					(select 
 						case when t1.user_id={$userid} then t1.to_user_id else t1.user_id END as user_id,
-						t1.create_time from 
-							(select * from `message` ORDER by create_time DESC) t1 
+						t1.create_time,t1.content from 
+						(select * from `message` ORDER by create_time DESC) t1 
 					where t1.user_id={$userid} or t1.to_user_id={$userid} 
 					GROUP by case when user_id>t1.to_user_id THEN t1.user_id*1000000000 + t1.to_user_id ELSE t1.to_user_id*1000000000 + t1.user_id END  
-					order by t1.create_time DESC) t3 left join `user` t2 on t2.id=t3.user_id
+					order by t1.create_time DESC
+					) 
+				t3 left join `user` t2 on t2.id=t3.user_id
 				" );
 		$this->output_result ( 0, 'success', $query->result_array () );
 	}
