@@ -214,8 +214,9 @@ class api extends CI_Controller {
 		else {
 			$create_time = time ();
 			$userinfo = $this->db->query ( "update `user` set sex='{$sex}',interest='{$interest}',nickname='{$nickname}',create_time='{$create_time}' where id={$userid} " );
-			$query = $this->db->query ( "select id, nickname,photo,sex,interest from `user` where id = {$user_id}" );
-			$this->output_result ( 0, 'success', $query->result_array[0]);
+			$result = $this->db->query ( "select id, nickname,photo,sex,interest from `user` where id = {$userid}" )->result_array();
+			$result[0] ['id'] = $this->encrypt->encode ( $result[0] ['id'], $this->key );
+			$this->output_result(0, 'success', $result[0]);
 			// $this->db->query("update `user` set password='{$password}' and nickname='{$nickname}' where userid='{$user_id}'");
 		}
 	}
