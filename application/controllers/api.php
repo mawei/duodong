@@ -165,11 +165,11 @@ class api extends CI_Controller {
 	public function register_authcode(){
 		$auth_code_secret = $this->encrypt->decode ( $this->format_get ( 'auth_code_secret' ), $this->key );
 		$authcode = $this->format_get ( 'code' );
-		$username = $this->encrypt->decode ( $this->format_get ( 'username' ), $this->key );
+		$username_secret = $this->encrypt->decode ( $this->format_get ( 'username_secret' ), $this->key );
 		
-		//$username = $this->format_get ( 'username' );
+		$username = $this->format_get ( 'username' );
 	
-		if($_SESSION['username'] != $username)
+		if($username_secret != $username)
 		{
 			$this->output_result(-1, 'failed', '非法请求');
 		}
