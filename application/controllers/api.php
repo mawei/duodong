@@ -68,7 +68,7 @@ class api extends CI_Controller {
 	public function getUserInfoById() {
 		$user_id = $this->format_get ( 'user_id' );
 		
-		$query = $this->db->query ( "select id, nickname,photo,sex from `user` where id = {$user_id}" );
+		$query = $this->db->query ( "select id, nickname,photo,sex,interest from `user` where id = {$user_id}" );
 		if (count ( $query->result_array () ) > 0) {
 			$result = $query->result_array ()[0];
 			if ($this->format_get ( 'self_user_id', '' ) != '') {
@@ -147,10 +147,35 @@ class api extends CI_Controller {
 		}
 	}
 	
+	public function register_authcode(){
+		$auth_code_secret = $this->encrypt->decode ( $this->format_get ( 'auth_code_secret' ), $this->key );
+		$authcode = $this->format_get ( 'code' );
+		$username = $this->format_get ( 'username' );
+	
+		if($_SESSION['username'] != $username)
+		{
+			$this->output_result(-1, 'failed', '非法请求');
+		}
+		if($auth_code_secret == $authcode)
+		{
+			$result = $this->db->query ( "select * from `user` where username = '{$username}'" )->result_array ();
+			if(count($result) == 0)
+			{
+				$data['username'] = $username;
+				$this->db->insert('user',$data);
+				$id = $this->encrypt->encode ( $this->db->insert_id (), $this->key );
+				$this->output_result(0, 'success', $id);
+			}
+		}else{
+			$this->output_result(-1, 'failed', '验证码错误');
+		}
+	}
+	
 	public function get_authcode() {
 		$mobile = $this->format_get ( 'mobile' );
 		$authcode = mt_rand ( 111111, 999999 );
 		$_SESSION ['authcode'] = $authcode;
+		$_SESSION ['username'] = $mobile;
 		$this->session->set_userdata ( 'authcode', $authcode );
 		$result = $this->sms_code ( $mobile, $authcode );
 		$this->output_result ( 0, 'success', $this->encrypt->encode ( $authcode, $this->key ) );
@@ -174,27 +199,28 @@ class api extends CI_Controller {
 		$this->output_result ( 0, 'success', $photo );
 	}
 	public function complete_userinfo() {
-		// $user_id = $this->encrypt->decode($this->format_get('user_id'),$this->key);
-		$username = $this->format_get ( 'username' );
+		$user_id = $this->encrypt->decode($this->format_get('user_id'),$this->key);
 		$nickname = $this->format_get ( 'nickname' );
-		$password1 = $this->format_get ( 'password1' );
-		$password2 = $this->format_get ( 'password2' );
+		$sex = $this->format_get ( 'sex' );
+		$interest = $this->format_get ( 'interest' );
 		
-		if ($password1 != $password2 || $password1 == '') {
-			$this->output_result ( - 1, 'failed', '密码不一致' );
+		if ($sex != "男" && $sex != "女") {
+			$this->output_result ( - 1, 'failed', '性别输入有误' );
 		} else if ($nickname == '') {
 			$this->output_result ( - 2, 'failed', '昵称不能为空' );
-		} else {
+		} else if ($interest == '') {
+			$this->output_result ( - 3, 'failed', '兴趣不能为空' );
+		} 
+		else {
 			$create_time = time ();
-			$password = md5 ( $this->key . $password1 );
-			$userinfo = $this->db->query ( " insert into `user` (username,nickname,password,create_time) VALUES ('{$username}','{$nickname}','{$password}','{$create_time}')" );
-			$userid = $this->db->insert_id ();
-			$this->output_result ( 0, 'success', $this->encrypt->encode ( $userid, $this->key ) );
+			$userinfo = $this->db->query ( "update `user` set sex='{$sex}',interest='{$interest}',nickname='{$nickname}',create_time='{$create_time}' where id={$userid} " );
+			$query = $this->db->query ( "select id, nickname,photo,sex,interest from `user` where id = {$user_id}" );
+			$this->output_result ( 0, 'success', $query->result_array[0]);
 			// $this->db->query("update `user` set password='{$password}' and nickname='{$nickname}' where userid='{$user_id}'");
 		}
 	}
 	
-	public function login_set_password() {
+	public function set_password() {
 		$user_id = $this->encrypt->decode($this->format_get('user_id'),$this->key);
 		$password1 = $this->format_get ( 'password1' );
 		$password2 = $this->format_get ( 'password2' );
