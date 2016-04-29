@@ -1,4 +1,6 @@
 <?php
+ini_set("display_errors", "On");
+error_reporting(E_ALL | E_STRICT);
 
 if (! defined ( 'BASEPATH' ))
 	exit ( 'No direct script access allowed' );
@@ -129,7 +131,8 @@ class api extends CI_Controller {
 	
 	public function login_authcode(){
 		$auth_code_secret = $this->encrypt->decode ( $this->format_get ( 'auth_code_secret' ), $this->key );
-		$authcode = $this->format_get ( 'code' );		$username = $this->format_get ( 'username' );
+		$authcode = $this->format_get ( 'code' );		
+		$username = $this->format_get ( 'username' );
 		
 		if($auth_code_secret == $authcode)
 		{
@@ -201,7 +204,7 @@ class api extends CI_Controller {
 		}else {
 			$create_time = time ();
 			$password = md5 ( $this->key . $password1 );
-			$this->db_query("update `user` set password='{$password}' where id={$user_id}");
+			$this->db->query("update `user` set password='{$password}' where id={$user_id}");
 			$this->output_result ( 0, 'success', '设置成功' );
 			// $this->db->query("update `user` set password='{$password}' and nickname='{$nickname}' where userid='{$user_id}'");
 		}
