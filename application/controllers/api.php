@@ -179,6 +179,7 @@ class api extends CI_Controller {
 			if(count($result) == 0)
 			{
 				$data['username'] = $username;
+				$data['create_time'] = time();
 				$this->db->insert('user',$data);
 				$id = $this->encrypt->encode ( $this->db->insert_id (), $this->key );
 				$this->output_result(0, 'success', $id);
@@ -235,7 +236,7 @@ class api extends CI_Controller {
 		$this->output_result ( 0, 'success', $photo );
 	}
 	public function complete_userinfo() {
-		$user_id = $this->encrypt->decode($this->format_get('user_id'),$this->key);
+		$userid = $this->encrypt->decode($this->format_get('user_id'),$this->key);
 		$nickname = $this->format_get ( 'nickname' );
 		$sex = $this->format_get ( 'sex' );
 		$interest = $this->format_get ( 'interest' );
