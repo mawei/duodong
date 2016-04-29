@@ -131,8 +131,10 @@ class api extends CI_Controller {
 	
 	public function login_authcode(){
 		$auth_code_secret = $this->encrypt->decode ( $this->format_get ( 'auth_code_secret' ), $this->key );
-		$authcode = $this->format_get ( 'code' );		
-		$username = $this->format_get ( 'username' );
+		$authcode = $this->format_get ( 'code' );	
+		$username = $this->encrypt->decode ( $this->format_get ( 'username' ), $this->key );
+		
+		//$username = $this->format_get ( 'username' );
 		
 		if($auth_code_secret == $authcode)
 		{
@@ -147,10 +149,25 @@ class api extends CI_Controller {
 		}
 	}
 	
+	public function check_username()
+	{
+		
+		$username = $this->format_get ( 'username' );
+		$result = $this->db->query ( "select * from `user` where username = '{$username}'" )->result_array ();
+		if(count($result) == 0)
+		{
+			$this->output_result(0, 'success', $this->encrypt->encode ( $username, $this->key ));
+		}else{
+			$this->output_result(-1, 'failed', '该手机号已注册');
+		}
+	}
+	
 	public function register_authcode(){
 		$auth_code_secret = $this->encrypt->decode ( $this->format_get ( 'auth_code_secret' ), $this->key );
 		$authcode = $this->format_get ( 'code' );
-		$username = $this->format_get ( 'username' );
+		$username = $this->encrypt->decode ( $this->format_get ( 'username' ), $this->key );
+		
+		//$username = $this->format_get ( 'username' );
 	
 		if($_SESSION['username'] != $username)
 		{
@@ -165,6 +182,8 @@ class api extends CI_Controller {
 				$this->db->insert('user',$data);
 				$id = $this->encrypt->encode ( $this->db->insert_id (), $this->key );
 				$this->output_result(0, 'success', $id);
+			}else{
+				$this->output_result(-1, 'failed', '该手机号已注册');
 			}
 		}else{
 			$this->output_result(-1, 'failed', '验证码错误');
@@ -174,12 +193,29 @@ class api extends CI_Controller {
 	public function get_authcode() {
 		$mobile = $this->format_get ( 'mobile' );
 		$authcode = mt_rand ( 111111, 999999 );
-		$_SESSION ['authcode'] = $authcode;
-		$_SESSION ['username'] = $mobile;
-		$this->session->set_userdata ( 'authcode', $authcode );
 		$result = $this->sms_code ( $mobile, $authcode );
-		$this->output_result ( 0, 'success', $this->encrypt->encode ( $authcode, $this->key ) );
+		$res['username'] = $this->encrypt->encode ( $mobile, $this->key );
+		$res['authcode'] = $this->encrypt->encode ( $authcode, $this->key );
+		$this->output_result ( 0, 'success', $res);
 	}
+	
+	public function register_get_authcode() {
+		$mobile = $this->format_get ( 'mobile' );
+		$authcode = mt_rand ( 111111, 999999 );
+		$result = $this->sms_code ( $mobile, $authcode );
+	
+		$res['username'] = $this->encrypt->encode ( $mobile, $this->key );
+		$res['authcode'] = $this->encrypt->encode ( $authcode, $this->key );
+	
+		$result = $this->db->query ( "select * from `user` where username = '{$mobile}'" )->result_array ();
+		if(count($result) == 0)
+		{
+			$this->output_result(0, 'success', $res);
+		}else{
+			$this->output_result(-1, 'failed', '该手机号已注册');
+		}
+	}
+	
 	function upload_user_photo() {
 		$user_id = $this->encrypt->decode ( $this->format_get ( 'user_id' ), $this->key );
 		$config ['upload_path'] = getcwd () . '/uploads/user/';
