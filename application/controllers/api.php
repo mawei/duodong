@@ -102,6 +102,7 @@ class api extends CI_Controller {
 				$array ['nickname'] = $result2 [0] ['nickname'];
 				$array ['phone'] = $result2 [0] ['username'];
 				$array ['photo'] = $result2 [0] ['photo'];
+				$array ['sex'] = $result2 [0] ['sex'];
 				$this->output_result ( 0, 'success', $array );
 			} else {
 				$this->output_result ( - 3, 'failed', '密码错误' );
@@ -125,6 +126,24 @@ class api extends CI_Controller {
 			$this->output_result ( 0, 'success', '' );
 		}
 	}
+	
+	public function login_authcode(){
+		$auth_code_secret = $this->encrypt->decode ( $this->format_get ( 'auth_code_secret' ), $this->key );
+		$authcode = $this->format_get ( 'code' );		$username = $this->format_get ( 'username' );
+		
+		if($auth_code_secret == $authcode)
+		{
+			$result = $this->db->query ( "select * from `user` where username = '{$username}'" )->result_array ();
+			if(count($result) > 0)
+			{
+				$result[0] ['id'] = $this->encrypt->encode ( $result[0] ['id'], $this->key );
+				$this->output_result(0, 'success', $result[0]);
+			}
+		}else{
+			$this->output_result(-1, 'failed', '验证码错误');
+		}
+	}
+	
 	public function get_authcode() {
 		$mobile = $this->format_get ( 'mobile' );
 		$authcode = mt_rand ( 111111, 999999 );
@@ -171,6 +190,23 @@ class api extends CI_Controller {
 			// $this->db->query("update `user` set password='{$password}' and nickname='{$nickname}' where userid='{$user_id}'");
 		}
 	}
+	
+	public function login_set_password() {
+		$user_id = $this->encrypt->decode($this->format_get('user_id'),$this->key);
+		$password1 = $this->format_get ( 'password1' );
+		$password2 = $this->format_get ( 'password2' );
+	
+		if ($password1 != $password2 || $password1 == '') {
+			$this->output_result ( - 1, 'failed', '密码不一致' );
+		}else {
+			$create_time = time ();
+			$password = md5 ( $this->key . $password1 );
+			$this->db_query("update `user` set password='{$password}' where id={$user_id}");
+			$this->output_result ( 0, 'success', '设置成功' );
+			// $this->db->query("update `user` set password='{$password}' and nickname='{$nickname}' where userid='{$user_id}'");
+		}
+	}
+	
 // 	public function get_messages() {
 // 		$user_id = $this->encrypt->decode ( $this->format_get ( 'user_id' ), $this->key );
 // 		$page = addslashes ( $_GET ['page'] );
