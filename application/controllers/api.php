@@ -449,7 +449,7 @@ class api extends CI_Controller {
 		if ($category != "所有活动") {
 			$query_str .= " and category='{$category}'";
 		}
-		$query_str .= " and apply_number <> remain_number";
+		$query_str .= " and t1.apply_number <> t1.remain_number";
 		if($search_text != "")
 		{
 			$query_str .= " and (t2.nickname like '%{$search_text}%' or t1.memo like '%{$search_text}%' or t1.address like '%{$search_text}%')";
