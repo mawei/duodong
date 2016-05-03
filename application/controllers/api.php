@@ -107,6 +107,7 @@ class api extends CI_Controller {
 				$array ['phone'] = $result2 [0] ['username'];
 				$array ['photo'] = $result2 [0] ['photo'];
 				$array ['sex'] = $result2 [0] ['sex'];
+				$array ['interest'] = $result2 [0] ['interest'];
 				$array ['no_secret_id'] = $result2 [0] ['id'];
 				$this->output_result ( 0, 'success', $array );
 			} else {
@@ -238,6 +239,33 @@ class api extends CI_Controller {
 		$this->db->query ( "update `user` set photo='{$photo}' where id='{$user_id}'" );
 		$this->output_result ( 0, 'success', $photo );
 	}
+	
+	public  function change_interest() {
+		$userid = $this->encrypt->decode($this->format_get('user_id'),$this->key);
+		$interest = $this->format_get('interest');
+		$result = $this->db->query("select * from `user` where id={$userid}")->result_array();
+		if(count($result) > 0)
+		{
+			$this->db->query("update `user` set interest='{$interest}' where id={$userid}");
+			$this->output_result ( 0, 'success', '修改成功' );
+		}else{
+			$this->output_result ( 0, 'success', '用户不存在' );
+		}
+	}
+	
+	public  function change_nickname() {
+		$userid = $this->encrypt->decode($this->format_get('user_id'),$this->key);
+		$nickname = $this->format_get('nickname');
+		$result = $this->db->query("select * from `user` where id={$userid}")->result_array();
+		if(count($result) > 0)
+		{
+			$this->db->query("update `user` set nickname='{$nickname}' where id={$userid}");
+			$this->output_result ( 0, 'success', '修改成功' );
+		}else{
+			$this->output_result ( 0, 'success', '用户不存在' );
+		}
+	}
+	
 	public function complete_userinfo() {
 		$userid = $this->encrypt->decode($this->format_get('user_id'),$this->key);
 		$nickname = $this->format_get ( 'nickname' );
