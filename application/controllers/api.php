@@ -70,7 +70,9 @@ class api extends CI_Controller {
 		
 		$query = $this->db->query ( "select id, nickname,photo,sex,interest from `user` where id = {$user_id}" );
 		if (count ( $query->result_array () ) > 0) {
+			
 			$result = $query->result_array ()[0];
+			$result['no_secret_id'] = $result['id'];
 			if ($this->format_get ( 'self_user_id', '' ) != '') {
 				$result ['id'] = $this->encrypt->encode ( $result ['id'], $this->key );
 				$self_user_id = $this->encrypt->decode ( $this->format_get ( 'self_user_id' ), $this->key );
@@ -105,6 +107,7 @@ class api extends CI_Controller {
 				$array ['phone'] = $result2 [0] ['username'];
 				$array ['photo'] = $result2 [0] ['photo'];
 				$array ['sex'] = $result2 [0] ['sex'];
+				$array ['no_secret_id'] = $result2 [0] ['id'];
 				$this->output_result ( 0, 'success', $array );
 			} else {
 				$this->output_result ( - 3, 'failed', '密码错误' );
@@ -252,7 +255,9 @@ class api extends CI_Controller {
 			$create_time = time ();
 			$userinfo = $this->db->query ( "update `user` set sex='{$sex}',interest='{$interest}',nickname='{$nickname}',create_time='{$create_time}' where id={$userid} " );
 			$result = $this->db->query ( "select id, nickname,photo,sex,interest from `user` where id = {$userid}" )->result_array();
+			$result[0] ['no_secret_id'] = $result[0] ['id'];
 			$result[0] ['id'] = $this->encrypt->encode ( $result[0] ['id'], $this->key );
+			 
 			$this->output_result(0, 'success', $result[0]);
 			// $this->db->query("update `user` set password='{$password}' and nickname='{$nickname}' where userid='{$user_id}'");
 		}
@@ -369,6 +374,7 @@ class api extends CI_Controller {
 	function get_apply_users() {
 		$activity_id = $this->format_get ( 'activity_id' );
 		$result = $this->db->query ( "select t2.photo,t2.nickname,t2.id,t2.sex from `attend` t1 join `user` t2 on t1.user_id=t2.id  where activity_id={$activity_id}" )->result_array ();
+		$result['no_secret_id'] = $result['id'];
 		$this->output_result ( 0, 'success', $result );
 	}
 	function get_activities() {
@@ -485,8 +491,9 @@ class api extends CI_Controller {
 		$number = addslashes ( $_GET ['number'] );
 		$start = ($page - 1) * $number;
 		
-		$query = $this->db->query ( "select t2.id, t2.photo,t2.nickname from `follow` t1 left join `user` t2 on t1.followed_user_id=t2.id where follow_user_id={$user_id} and status=1 limit {$start},{$number}" );
-		$this->output_result ( 0, 'success', $query->result_array () );
+		$result = $this->db->query ( "select t2.id, t2.photo,t2.nickname from `follow` t1 left join `user` t2 on t1.followed_user_id=t2.id where follow_user_id={$user_id} and status=1 limit {$start},{$number}" )->result_array ();
+		$result['no_secret_id'] = $result['id'];
+		$this->output_result ( 0, 'success', $result );
 	}
 	public function get_messages() {
 		$self_id = $this->encrypt->decode ( $this->format_get ( 'self_user_id' ), $this->key );
