@@ -551,7 +551,7 @@ class api extends CI_Controller {
 		$this->output_result ( 0, 'success', $query->result_array () );
 	}
 	private function sms_code($mobile, $code) {
-		$content = "【公盛科技】您的验证码是{$code}";
+		$content = "【一隼网络】您的验证码是{$code}";
 		$url = "http://yunpian.com/v1/sms/send.json";
 		$encoded_text = urlencode ( "$content" );
 		$post_string = "apikey=355e91e02a95574559ebba5a3c1af6c2&text=$content&mobile=$mobile";
