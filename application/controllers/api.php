@@ -383,6 +383,20 @@ class api extends CI_Controller {
 		if (count ( $result ) > 0) {
 			$this->output_result ( 0, 'success', "已报名该活动" );
 		} else {
+			$r = $this->db->query ( "select * from `activity` where id={$data['activity_id']}" )->result_array ();
+			if($r['sex_limit'] != "不限性别")
+			{
+				$user_sex = $this->db->query ( "select * from `user` where id={$data['user_id']}" )->result_array ()[0]['sex'];
+				if(mb_substr($r['sex_limit'], 1,1,'utf-8') == $user_sex)
+				{
+					$this->db->insert ( 'attend', $data );
+					$this->db->query ( "update `activity` set apply_number = apply_number + 1 where id={$data['activity_id']}" );
+					$this->output_result ( 0, 'success', "报名成功" );
+				}else{
+					$this->output_result ( -1, 'failed', "该项目只".$r['sex_limit'].",嘿嘿" );
+				}	
+			}
+			
 			$this->db->insert ( 'attend', $data );
 			$this->db->query ( "update `activity` set apply_number = apply_number + 1 where id={$data['activity_id']}" );
 			$this->output_result ( 0, 'success', "报名成功" );
@@ -435,6 +449,7 @@ class api extends CI_Controller {
 		if ($category != "所有活动") {
 			$query_str .= " and category='{$category}'";
 		}
+		$query_str .= " and apply_number <> remain_number";
 		if($search_text != "")
 		{
 			$query_str .= " and (t2.nickname like '%{$search_text}%' or t1.memo like '%{$search_text}%' or t1.address like '%{$search_text}%')";
