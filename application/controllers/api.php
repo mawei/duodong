@@ -373,8 +373,7 @@ class api extends CI_Controller {
 	}
 	function get_apply_users() {
 		$activity_id = $this->format_get ( 'activity_id' );
-		$result = $this->db->query ( "select t2.photo,t2.nickname,t2.id,t2.sex from `attend` t1 join `user` t2 on t1.user_id=t2.id  where activity_id={$activity_id}" )->result_array ();
-		$result['no_secret_id'] = $result['id'];
+		$result = $this->db->query ( "select t2.photo,t2.nickname,t2.id,t2.id as no_secret_id,t2.sex from `attend` t1 join `user` t2 on t1.user_id=t2.id  where activity_id={$activity_id}" )->result_array ();
 		$this->output_result ( 0, 'success', $result );
 	}
 	function get_activities() {
@@ -491,8 +490,7 @@ class api extends CI_Controller {
 		$number = addslashes ( $_GET ['number'] );
 		$start = ($page - 1) * $number;
 		
-		$result = $this->db->query ( "select t2.id, t2.photo,t2.nickname from `follow` t1 left join `user` t2 on t1.followed_user_id=t2.id where follow_user_id={$user_id} and status=1 limit {$start},{$number}" )->result_array ();
-		$result['no_secret_id'] = $result['id'];
+		$result = $this->db->query ( "select t2.id,t2.id as no_secret_id, t2.photo,t2.nickname from `follow` t1 left join `user` t2 on t1.followed_user_id=t2.id where follow_user_id={$user_id} and status=1 limit {$start},{$number}" )->result_array ();
 		$this->output_result ( 0, 'success', $result );
 	}
 	public function get_messages() {
