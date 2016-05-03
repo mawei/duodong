@@ -347,7 +347,7 @@ class api extends CI_Controller {
 		$data ['activity_id'] = $this->format_get ( 'activity_id' );
 		$data ['user_id'] = $user_id;
 		$data ['create_time'] = time ();
-		$res = $this->db->query ( "select * from `activity` where creater_id={$user_id} and activity_id={$data['activity_id']}" )->result_array ();
+		$res = $this->db->query ( "select * from `activity` where creater_id={$user_id} and id={$data['activity_id']}" )->result_array ();
 		if (count ( $result ) > 0) {
 			$this->output_result ( 0, 'success', "这活动是你自己发起的！" );
 		}
