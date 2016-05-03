@@ -383,7 +383,7 @@ class api extends CI_Controller {
 		if (count ( $result ) > 0) {
 			$this->output_result ( 0, 'success', "已报名该活动" );
 		} else {
-			$r = $this->db->query ( "select * from `activity` where id={$data['activity_id']}" )->result_array ();
+			$r = $this->db->query ( "select * from `activity` where id={$data['activity_id']}" )->result_array ()[0];
 			if($r['sex_limit'] != "不限性别")
 			{
 				$user_sex = $this->db->query ( "select * from `user` where id={$data['user_id']}" )->result_array ()[0]['sex'];
