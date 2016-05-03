@@ -401,7 +401,7 @@ class api extends CI_Controller {
 		}
 		if($search_text != "")
 		{
-			$query_str .= " and (t2.nickname like '%{$search_text}%' or t1.memo like '%{$search_text}%' or t1.address like '%{$search_text}%)'";
+			$query_str .= " and (t2.nickname like '%{$search_text}%' or t1.memo like '%{$search_text}%' or t1.address like '%{$search_text}%')";
 		}
 		$query_str .= " order by distance asc, t1.time asc limit {$start},{$number}";
 		$query = $this->db->query ( $query_str );
