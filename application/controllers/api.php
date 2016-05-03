@@ -380,7 +380,7 @@ class api extends CI_Controller {
 			$this->output_result ( -1, 'failed', "这活动是你自己发起的！" );
 		}
 		$number_res = $this->db->query ( "select * from `activity` where id={$data['activity_id']} and apply_number >= limit_number" )->result_array ();
-		if (count ( $res ) > 0) {
+		if (count ( $number_res ) > 0) {
 			$this->output_result ( -2, 'failed', "活动名额已满，换一个吧" );
 		}
 		
