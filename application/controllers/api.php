@@ -481,7 +481,11 @@ class api extends CI_Controller {
 	}
 	public function get_follows() {
 		$user_id = $this->encrypt->decode ( $this->format_get ( 'user_id' ), $this->key );
-		$query = $this->db->query ( "select t2.id, t2.photo,t2.nickname from `follow` t1 left join `user` t2 on t1.followed_user_id=t2.id where follow_user_id={$user_id} and status=1 " );
+		$page = addslashes ( $_GET ['page'] );
+		$number = addslashes ( $_GET ['number'] );
+		$start = ($page - 1) * $number;
+		
+		$query = $this->db->query ( "select t2.id, t2.photo,t2.nickname from `follow` t1 left join `user` t2 on t1.followed_user_id=t2.id where follow_user_id={$user_id} and status=1 limit {$start},{$number}" );
 		$this->output_result ( 0, 'success', $query->result_array () );
 	}
 	public function get_messages() {
@@ -489,6 +493,8 @@ class api extends CI_Controller {
 		$user_id = $this->format_get ( 'user_id' );
 		$page = addslashes ( $_GET ['page'] );
 		$number = addslashes ( $_GET ['number'] );
+		$start = ($page - 1) * $number;
+		
 		$query = $this->db->query ( "
 			select 
 				t2.nickname as user_nickname,
@@ -503,6 +509,7 @@ class api extends CI_Controller {
 				where (t1.user_id={$self_id} and t1.to_user_id={$user_id} ) 
 				or (t1.user_id={$user_id} and t1.to_user_id={$self_id} )
 				order by t1.create_time desc
+				limit {$start},{$number}
 				" );
 		
 		$this->output_result ( 0, 'success', $query->result_array () );
@@ -511,6 +518,8 @@ class api extends CI_Controller {
 		$userid = $this->encrypt->decode ( $this->format_get ( 'user_id' ), $this->key );
 		$page = addslashes ( $_GET ['page'] );
 		$number = addslashes ( $_GET ['number'] );
+		$start = ($page - 1) * $number;
+		
 		$query = $this->db->query ( "
 				select
 				t3.user_id,
@@ -528,6 +537,7 @@ class api extends CI_Controller {
 					order by t1.create_time DESC
 					) 
 				t3 left join `user` t2 on t2.id=t3.user_id
+				limit {$start},{$number}
 				" );
 		$this->output_result ( 0, 'success', $query->result_array () );
 	}
