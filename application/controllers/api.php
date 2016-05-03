@@ -374,6 +374,7 @@ class api extends CI_Controller {
 	function get_activities() {
 		$page = addslashes ( $_GET ['page'] );
 		$number = addslashes ( $_GET ['number'] );
+		$search_text = addslashes ( $_GET ['search_text'] );
 		$time = addslashes ( $_GET ['time'] );
 		$category = addslashes ( $_GET ['category'] );
 		$start = ($page - 1) * $number;
@@ -397,6 +398,10 @@ class api extends CI_Controller {
 		$query_str .= " and DATEDIFF(t1.time,NOW()) > -1";
 		if ($category != "所有活动") {
 			$query_str .= " and category='{$category}'";
+		}
+		if($search_text != "")
+		{
+			$query_str .= " and (t2.nickname like %{$search_text}% or t1.memo like %{$search_text}% or t1.address like %{$search_text}%)";
 		}
 		$query_str .= " order by distance asc, t1.time asc limit {$start},{$number}";
 		$query = $this->db->query ( $query_str );
