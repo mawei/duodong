@@ -345,9 +345,9 @@ class api extends CI_Controller {
 		$longitude = addslashes ( $_GET ['longitude'] );
 		
 		$result = $this->db->query ( "
-				select t2.name FROM
+				select t2.address FROM
 				(
-				select t1.name,t1.cover_distance,
+				select t1.address,t1.cover_distance,
 				sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t1.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t1.latitude * 0.01745329252)),2)) as 'distance'
 				from `place` t1 where category='{$category}' and datediff(t1.expire_date,now()) >= 0
 				order by level
