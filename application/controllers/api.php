@@ -338,6 +338,33 @@ class api extends CI_Controller {
 		
 		$this->output_result ( 0, 'success', $result );
 	}
+	
+	public function get_recommand_place() {
+		$category = $this->format_get ( 'category' );
+		$latitude = addslashes ( $_GET ['latitude'] );
+		$longitude = addslashes ( $_GET ['longitude'] );
+		
+		$result = $this->db->query ( "
+				select t2.name FROM
+				(
+				select t1.name,t1.cover_distance,
+				sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t1.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t1.latitude * 0.01745329252)),2)) as 'distance'
+				from `place` t1 where category='{$category}' and datediff(t1.expire_date,now()) >= 0
+				order by level
+				) t2
+				where  t2.distance < t2.cover_distance
+				limit 1
+				" )->result_array ();
+		if(count($result) > 0)
+		{
+			$this->output_result ( 0, 'success', $result[0]['name'] );
+		}else{
+			$this->output_result ( 0, 'success', "" );
+		}
+	
+				
+	}
+	
 	function create_activity() {
 		$user_id = $this->encrypt->decode ( $this->format_get ( 'user_id' ), $this->key );
 		$data ['time'] = str_replace ( "+", "-", $this->format_get ( 'time' ) );
@@ -501,6 +528,17 @@ class api extends CI_Controller {
 				from `collect` t1 join `activity` t2 on t1.activity_id=t2.id join `user` t3 on t3.id = t2.creater_id  where t1.user_id='{$userid}' order by t2.create_time desc limit {$start},{$number}" );
 		$this->output_result ( 0, 'success', $query->result_array () );
 	}
+	
+	public function delete_activity() {
+		$userid = $this->encrypt->decode ( $this->format_get ( 'user_id' ), $this->key );
+		$activity_id = $this->format_get('activity_id');
+		$delete_reason = $this->format_get('delete_reason');
+		$this->db->query("update `activity` set is_delete=1,delete_reason='{$delete_reason}' where id={$activity_id} and creater_id={$userid} ");
+		$this->output_result ( 0, 'success', '删除成功' );
+	}
+	
+	
+	
 	public function follow() {
 		$follow_user_id = $this->encrypt->decode ( $this->format_get ( 'self_user_id' ), $this->key );
 		$followed_user_id = addslashes ( $_GET ['user_id'] );
