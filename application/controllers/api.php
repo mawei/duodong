@@ -147,6 +147,8 @@ class api extends CI_Controller {
 			{
 				$result[0] ['id'] = $this->encrypt->encode ( $result[0] ['id'], $this->key );
 				$this->output_result(0, 'success', $result[0]);
+			}else{
+				$this->output_result(-1, 'failed', '该手机号不存在，请先注册');
 			}
 		}else{
 			$this->output_result(-1, 'failed', '验证码错误');
