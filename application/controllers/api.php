@@ -485,6 +485,7 @@ class api extends CI_Controller {
 			$query_str .= " and category='{$category}'";
 		}
 		$query_str .= " and t1.apply_number <> t1.remain_number";
+		$query_str .= " and t1.is_delete=0";
 		//$query_str .= " and distance <= 50000";
 		if($search_text != "")
 		{
