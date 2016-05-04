@@ -388,6 +388,7 @@ class api extends CI_Controller {
 	function report_activity() {
 		$user_id = $this->encrypt->decode ( $this->format_get ( 'user_id' ), $this->key );
 		$data ['activity_id'] = $this->format_get ( 'activity_id' );
+		$data ['content'] = $this->format_get ( 'content' );
 		$data ['user_id'] = $user_id;
 		$data ['create_time'] = time ();
 		
