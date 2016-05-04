@@ -345,7 +345,7 @@ class api extends CI_Controller {
 		$longitude = addslashes ( $_GET ['longitude'] );
 		
 		$result = $this->db->query ( "
-				select t2.address FROM
+				select t2.address as name FROM
 				(
 				select t1.address,t1.cover_distance,
 				sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t1.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t1.latitude * 0.01745329252)),2)) as 'distance'
