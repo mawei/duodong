@@ -30,6 +30,8 @@ class api extends CI_Controller {
 		$this->load->library ( 'encrypt' );
 		
 		$this->key = '&(*&(*';
+		$this->UmengKey = "5710924be0f55a8aba000646";
+		$this->UmengSecret = "vuqkrc5tc08uolcgvolti87y60uhieyc";
 		
 		// 验证˙
 		// $this->auth_token();
@@ -255,6 +257,12 @@ class api extends CI_Controller {
 		}
 	}
 	
+	public function get_categories()
+	{
+		$result = $this->db->query("select * from `category` where is_delete=0")->result_array();
+		$this->output_result ( 0, 'success', $result );
+	}
+	
 	public  function change_nickname() {
 		$userid = $this->encrypt->decode($this->format_get('user_id'),$this->key);
 		$nickname = $this->format_get('nickname');
@@ -384,7 +392,18 @@ class api extends CI_Controller {
 		$this->db->insert_id ();
 		
 		$this->output_result ( 0, 'success', $this->db->insert_id () );
+		
+		
 	}
+	
+	function test_notification()
+	{
+		$notification = new Notification($this->UmengKey, $this->UmengSecret);
+		$notification->sendIOSListcast("***在你周边发起了羽毛球活动", "33992a3218007b7323f207f296b4873fc20c40684c3fa41e089d15fdf6e1cd01");
+		// $demo = new Demo("your appkey", "your app master secret");
+		// $demo->sendAndroidUnicast();
+	}
+	
 	function report_activity() {
 		$user_id = $this->encrypt->decode ( $this->format_get ( 'user_id' ), $this->key );
 		$data ['activity_id'] = $this->format_get ( 'activity_id' );
