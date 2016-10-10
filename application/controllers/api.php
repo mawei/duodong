@@ -110,6 +110,7 @@ class api extends CI_Controller {
 				$array ['phone'] = $result2 [0] ['username'];
 				$array ['photo'] = $result2 [0] ['photo'];
 				$array ['sex'] = $result2 [0] ['sex'];
+				$array ['device_token'] = $result2 [0] ['device_token'];
 				$array ['interest'] = $result2 [0] ['interest'];
 				$array ['no_secret_id'] = $result2 [0] ['id'];
 				$this->output_result ( 0, 'success', $array );
@@ -174,6 +175,7 @@ class api extends CI_Controller {
 	public function register_authcode(){
 		$auth_code_secret = $this->encrypt->decode ( $this->format_get ( 'auth_code_secret' ), $this->key );
 		$authcode = $this->format_get ( 'code' );
+		$device_token = $this->format_get ( 'device_token' );
 		$username_secret = $this->encrypt->decode ( $this->format_get ( 'username_secret' ), $this->key );
 		
 		$username = $this->format_get ( 'username' );
@@ -187,10 +189,18 @@ class api extends CI_Controller {
 			$result = $this->db->query ( "select * from `user` where username = '{$username}'" )->result_array ();
 			if(count($result) == 0)
 			{
-				$data['username'] = $username;
-				$data['create_time'] = time();
-				$this->db->insert('user',$data);
-				$id = $this->encrypt->encode ( $this->db->insert_id (), $this->key );
+				$result2 = $this->db->query ( "select * from `user` where device_token = '{$device_token}'" )->result_array ();
+				if(count($result2) > 0)
+				{
+					$time = time();
+					$this->db->query("update `user` set username='{username},create_time='$time' where device_token='{$device_token}'");
+					$id = $this->encrypt->encode ( $result[0]['id'], $this->key );
+				}else{
+					$data['username'] = $username;
+					$data['create_time'] = time();
+					$this->db->insert('user',$data);
+					$id = $this->encrypt->encode ( $this->db->insert_id (), $this->key );
+				}
 				$this->output_result(0, 'success', $id);
 			}else{
 				$this->output_result(-1, 'failed', '该手机号已注册');
@@ -198,6 +208,13 @@ class api extends CI_Controller {
 		}else{
 			$this->output_result(-1, 'failed', '验证码错误');
 		}
+	}
+	
+	public function register_device()
+	{
+		$device_token = $this->format_get ( 'device_token' );
+		$result2 = $this->db->query ( "select * from `user` where device_token = '{$device_token}'" )->result_array ();
+		
 	}
 	
 	public function get_authcode() {
@@ -394,7 +411,6 @@ class api extends CI_Controller {
 		
 		$this->output_result ( 0, 'success', $this->db->insert_id () );
 		
-		
 	}
 	
 	function test_notification()
@@ -486,32 +502,34 @@ class api extends CI_Controller {
 		$latitude = addslashes ( $_GET ['latitude'] );
 		$longitude = addslashes ( $_GET ['longitude'] );
 		$query_str = "select t1.*,t2.photo,t2.nickname,
-					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t1.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t1.latitude * 0.01745329252)),2)) as 'distance'
-					from `activity` t1 left join `user` t2 on t1.creater_id = t2.id where";
+					sqrt(POW((6370693.5 * cos({$latitude} * 0.01745329252) * ({$longitude} * 0.01745329252 - t1.longitude * 0.01745329252)),2) + POW((6370693.5 * ({$latitude} * 0.01745329252 - t1.latitude * 0.01745329252)),2)) as 'distance',t1.remain_number - t1.apply_number as number
+					from `activity` t1 left join `user` t2 on t1.creater_id = t2.id";
 		
-		if ($time == "今天") {
-			$query_str .= " DATEDIFF(t1.time,NOW()) = 0";
-		} else if ($time == "明天") {
-			$query_str .= " DATEDIFF(t1.time,NOW()) = 1";
-		} else if ($time == "后天") {
-			$query_str .= " DATEDIFF(t1.time,NOW()) = 2";
-		} else if ($time == "一周内") {
-			$query_str .= " DATEDIFF(t1.time,NOW()) <= 7";
-		} else if ($time == "一个月内") {
-			$query_str .= " DATEDIFF(t1.time,NOW()) <= 30";
-		}
-		$query_str .= " and DATEDIFF(t1.time,NOW()) > -1";
+		// if ($time == "今天") {
+		// 	$query_str .= " DATEDIFF(t1.time,NOW()) = 0";
+		// } else if ($time == "明天") {
+		// 	$query_str .= " DATEDIFF(t1.time,NOW()) = 1";
+		// } else if ($time == "后天") {
+		// 	$query_str .= " DATEDIFF(t1.time,NOW()) = 2";
+		// } else if ($time == "一周内") {
+		// 	$query_str .= " DATEDIFF(t1.time,NOW()) <= 7";
+		// } else if ($time == "一个月内") {
+		// 	$query_str .= " DATEDIFF(t1.time,NOW()) <= 30";
+		// }
+		// $query_str .= " and DATEDIFF(t1.time,NOW()) > -1";
 		if ($category != "所有活动") {
-			$query_str .= " and category='{$category}'";
+			$query_str .= " where category in ('{$category}')";
+		}else{
+			$query_str .= " where 1=1";
 		}
-		$query_str .= " and t1.apply_number <> t1.remain_number";
+		//$query_str .= " and t1.apply_number <> t1.remain_number";
 		$query_str .= " and t1.is_delete=0";
 		//$query_str .= " and distance <= 50000";
 		if($search_text != "")
 		{
 			$query_str .= " and (t2.nickname like '%{$search_text}%' or t1.memo like '%{$search_text}%' or t1.address like '%{$search_text}%')";
 		}
-		$query_str .= " order by distance asc, t1.time asc limit {$start},{$number}";
+		$query_str .= " order by number desc, distance asc, t1.time asc limit {$start},{$number}";
 		$query = $this->db->query ( $query_str );
 		
 		$this->output_result ( 0, 'success', $query->result_array () );
